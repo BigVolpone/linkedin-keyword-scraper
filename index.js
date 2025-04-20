@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8080;
 
 app.get('/', async (req, res) => {
   try {
-    const results = await scrapeLinkedIn('marketing digital'); // Tu peux passer un mot-clé dynamiquement
+    const results = await scrapeLinkedIn(); // mots-clés depuis .env
     res.json(results);
   } catch (error) {
     console.error('Erreur scraping LinkedIn :', error);
@@ -18,5 +18,5 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Listening on http://localhost:${PORT}`);
+  console.log(`✅ Server lancé sur http://localhost:${PORT}`);
 });
