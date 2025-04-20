@@ -11,7 +11,6 @@ const PORT = process.env.PORT || 8080;
 app.get('/', async (req, res) => {
   try {
     const path = await chromium.executablePath(); // 🧪 Log chemin binaire Playwright
-    console.log('🧪 Chromium Path:', path);        // 🔍 Tu verras ça dans Railway
 
     const results = await scrapeLinkedIn('marketing digital');
     res.json(results);
