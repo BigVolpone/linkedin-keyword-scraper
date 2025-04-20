@@ -1,25 +1,26 @@
 import { chromium } from 'playwright';
 
-export default async function scrapeLinkedIn(keyword) {
+export default async function scrapeLinkedIn(keyword = 'marketing digital') {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
-  await page.goto('https://www.linkedin.com/login');
-  await page.fill('input[name="session_key"]', process.env.LINKEDIN_USERNAME);
-  await page.fill('input[name="session_password"]', process.env.LINKEDIN_PASSWORD);
-  await page.click('button[type="submit"]');
+  const searchUrl = `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(keyword)}`;
+  await page.goto(searchUrl, { waitUntil: 'networkidle' });
 
-  await page.goto(`https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(keyword)}`);
-  await page.waitForTimeout(3000); // attendre le chargement
+  await page.waitForTimeout(5000); // Attente pour s'assurer que le contenu est chargé
 
-  const posts = await page.$$eval('div.feed-shared-update-v2', nodes =>
-    nodes.slice(0, 5).map(node => ({
-      title: node.innerText.slice(0, 100),
-      url: window.location.href,
-      date: new Date().toISOString()
-    }))
-  );
+  const results = await page.evaluate(() => {
+    const posts = [];
+    document.querySelectorAll('[data-urn^="urn:li:activity:"]').forEach(el => {
+      const text = el.innerText;
+      const link = el.querySelector('a')?.href;
+      if (text && link) {
+        posts.push({ title: text.trim(), url: link });
+      }
+    });
+    return posts;
+  });
 
   await browser.close();
-  return posts;
+  return results;
 }
