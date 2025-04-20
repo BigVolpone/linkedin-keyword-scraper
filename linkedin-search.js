@@ -35,6 +35,7 @@ const scrapeLinkedIn = async (keyword = 'marketing digital') => {
 
     console.log(`✅ ${posts.length} posts récupérés pour le mot-clé : ${keyword}`);
     await browser.close();
+    console.log(posts);
     return posts;
   } catch (err) {
     console.error('❌ Erreur lors du scraping :', err.message);
