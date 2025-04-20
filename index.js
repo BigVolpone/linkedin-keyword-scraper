@@ -9,7 +9,13 @@ const PORT = process.env.PORT || 8080;
 
 app.get('/', async (req, res) => {
   try {
-    const results = await scrapeLinkedIn(); // mots-clés depuis .env
+    const keyword = req.query.keyword || 'marketing digital';
+    const results = await scrapeLinkedIn(keyword);
+
+    if (!results || results.length === 0) {
+      return res.status(200).json({ message: 'Aucun résultat trouvé.' });
+    }
+
     res.json(results);
   } catch (error) {
     console.error('Erreur scraping LinkedIn :', error);
@@ -18,5 +24,5 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Server lancé sur http://localhost:${PORT}`);
+  console.log(`✅ Serveur démarré sur http://localhost:${PORT}`);
 });
