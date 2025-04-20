@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import scrapeLinkedIn from './linkedin-search.js';
+import { chromium } from 'playwright'; // 👈 Ajoute ceci !
 
 dotenv.config();
 
@@ -9,11 +10,14 @@ const PORT = process.env.PORT || 8080;
 
 app.get('/', async (req, res) => {
   try {
-    const results = await scrapeLinkedIn('marketing digital'); // ou passe un mot-clé dynamiquement
+    const path = await chromium.executablePath(); // 🧪 Log chemin binaire Playwright
+    console.log('🧪 Chromium Path:', path);        // 🔍 Tu verras ça dans Railway
+
+    const results = await scrapeLinkedIn('marketing digital');
     res.json(results);
   } catch (error) {
-    console.error('Erreur scraping LinkedIn :', error); // 🔴 Affiche dans Railway
-    res.status(500).json({ error: error.message || 'Erreur scraping LinkedIn' }); // 🔥 Ajoute le vrai message
+    console.error('Erreur scraping LinkedIn :', error);
+    res.status(500).json({ error: error.message || 'Erreur scraping LinkedIn' });
   }
 });
 
