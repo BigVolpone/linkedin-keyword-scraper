@@ -1,7 +1,7 @@
 {
   "name": "linkedin-keyword-scraper",
   "version": "1.0.0",
-  "description": "Scraper LinkedIn posts by keywords",
+  "description": "Scraper LinkedIn posts by keywords and save them into Postgres",
   "type": "module",
   "main": "linkedin-search.js",
   "scripts": {
@@ -10,8 +10,6 @@
   "dependencies": {
     "playwright": "^1.38.0",
     "dotenv": "^16.0.3",
-    "node-fetch": "^3.3.1",
-    "puppeteer": "^23.0.0",
-    "csv-writer": "^1.6.0"
+    "pg": "^8.8.0"
   }
 }
