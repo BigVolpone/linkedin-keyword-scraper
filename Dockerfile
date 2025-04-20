@@ -1,11 +1,14 @@
-# Dockerfile
-FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+# Utilise l’image officielle Playwright avec tout déjà installé
+FROM mcr.microsoft.com/playwright:v1.52.0-jammy
 
+# Crée le dossier de l’app
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
-
+# Copie tous les fichiers du repo
 COPY . .
 
-CMD ["node", "index.js"]
+# Installe les dépendances (package.json)
+RUN npm install
+
+# Démarre ton app
+CMD ["npm", "start"]
