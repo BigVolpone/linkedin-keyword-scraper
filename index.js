@@ -7,9 +7,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Endpoint avec mot-clé dynamique
 app.get('/', async (req, res) => {
   try {
-    const keyword = process.env.LINKEDIN_KEYWORDS || 'marketing digital';
+    const keyword = req.query.keyword || 'marketing digital'; // fallback si pas de query param
     const results = await scrapeLinkedIn(keyword);
     res.json(results);
   } catch (error) {
