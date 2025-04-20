@@ -1,28 +1,22 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
-import { scrapeLinkedIn } from './linkedin-search.js';
+import scrapeLinkedIn from './linkedin-search.js';
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 8080;
 
-app.get('/', (_req, res) => {
-  res.send('Service LinkedIn Scraper OK');
-});
-
-app.get('/scrape', async (_req, res) => {
+app.get('/', async (req, res) => {
   try {
-    const posts = await scrapeLinkedIn();
-    res.json(posts);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    const results = await scrapeLinkedIn('marketing digital'); // ou passe un mot-clé dynamiquement
+    res.json(results);
+  } catch (error) {
+    console.error('Erreur scraping :', error);
+    res.status(500).json({ error: 'Erreur scraping LinkedIn' });
   }
 });
 
-const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Listening on http://localhost:${PORT}`);
 });
