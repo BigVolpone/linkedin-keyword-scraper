@@ -1,16 +1,14 @@
 // index.js
 import express from 'express';
 import cors from 'cors';
-import linkedinSearch from './linkedin-search.js'; // votre logique actuelle
+import linkedinSearch from './linkedin-search.js';
 
 const app = express();
 app.use(cors());
 
 const PORT = process.env.PORT || 8080;
 
-app.get('/', (_req, res) => {
-  res.send('OK');
-});
+app.get('/', (_req, res) => res.send('OK'));
 
 app.get('/scrape', async (req, res) => {
   try {
