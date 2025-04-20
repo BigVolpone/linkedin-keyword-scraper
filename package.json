@@ -1,12 +1,15 @@
 {
   "name": "linkedin-keyword-scraper",
   "version": "1.0.0",
+  "description": "Scraper LinkedIn posts by keywords",
+  "type": "module",
   "main": "linkedin-search.js",
   "scripts": {
     "start": "node linkedin-search.js"
   },
   "dependencies": {
-    "puppeteer": "^25.0.0",
-    "node-fetch": "^3.3.1",
+    "playwright": "^1.38.0",
+    "dotenv": "^16.0.3",
+    "node-fetch": "^3.3.1"
   }
 }
