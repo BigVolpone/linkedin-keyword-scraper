@@ -9,13 +9,8 @@ const PORT = process.env.PORT || 8080;
 
 app.get('/', async (req, res) => {
   try {
-    const keyword = req.query.keyword || 'marketing digital';
+    const keyword = process.env.LINKEDIN_KEYWORDS || 'marketing digital';
     const results = await scrapeLinkedIn(keyword);
-
-    if (!results || results.length === 0) {
-      return res.status(200).json({ message: 'Aucun résultat trouvé.' });
-    }
-
     res.json(results);
   } catch (error) {
     console.error('Erreur scraping LinkedIn :', error);
