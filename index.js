@@ -12,8 +12,8 @@ app.get('/', async (req, res) => {
     const results = await scrapeLinkedIn('marketing digital'); // ou passe un mot-clé dynamiquement
     res.json(results);
   } catch (error) {
-    console.error('Erreur scraping :', error);
-    res.status(500).json({ error: 'Erreur scraping LinkedIn' });
+    console.error('Erreur scraping LinkedIn :', error); // 🔴 Affiche dans Railway
+    res.status(500).json({ error: error.message || 'Erreur scraping LinkedIn' }); // 🔥 Ajoute le vrai message
   }
 });
 
