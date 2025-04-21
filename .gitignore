@@ -1,0 +1,24 @@
+# Dossiers sensibles
+auth/
+node_modules/
+.env
+
+# Fichiers temporaires
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Mac / Linux
+.DS_Store
+Thumbs.db
+
+# IDE & éditeurs
+.vscode/
+.idea/
+
+# Railway build files
+dist/
+.build/
+.cache/
