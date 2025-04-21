@@ -1,14 +1,14 @@
-# Utilise l’image officielle Playwright avec tout déjà installé
-FROM mcr.microsoft.com/playwright:v1.52.0-jammy
+# Étape 1 : base image
+FROM node:18
 
-# Crée le dossier de l’app
+# Étape 2 : create app directory
 WORKDIR /app
 
-# Copie tous les fichiers du repo
+# Étape 3 : copy all files
 COPY . .
 
-# Installe les dépendances (package.json)
+# Étape 4 : install dependencies
 RUN npm install
 
-# Démarre ton app
-CMD ["npm", "start"]
+# Étape 5 : lancer le serveur
+CMD ["node", "server.js"]
