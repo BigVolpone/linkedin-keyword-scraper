@@ -1,56 +1,50 @@
 import { chromium } from 'playwright';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-const EMAIL = process.env.LINKEDIN_EMAIL;
-const PASSWORD = process.env.LINKEDIN_PASSWORD;
-const HEADLESS = process.env.HEADLESS === 'true';
+// Pour pouvoir utiliser __dirname en ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+// Dossier où seront stockés les cookies/session LinkedIn
+const USER_DATA_DIR = path.join(__dirname, 'auth', 'linkedin-session');
 
 export default async function scrapeLinkedIn(keyword = 'marketing digital') {
-  const browser = await chromium.launch({ headless: HEADLESS });
-  const context = await browser.newContext();
-  const page = await context.newPage();
+  const browser = await chromium.launchPersistentContext(USER_DATA_DIR, {
+    headless: process.env.HEADLESS !== 'false',
+  });
+
+  const page = await browser.newPage();
+  await page.goto('https://www.linkedin.com/feed/', { waitUntil: 'networkidle' });
 
   try {
-    // 🔐 Connexion à LinkedIn
-    await page.goto('https://www.linkedin.com/login', { timeout: 60000 });
-    await page.fill('input[name="session_key"]', EMAIL);
-    await page.fill('input[name="session_password"]', PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForLoadState('networkidle');
-    console.log('🔓 Connecté à LinkedIn');
-
-    // 🔎 Rechercher des publications avec le mot-clé
-    const searchUrl = `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(keyword)}&origin=SWITCH_SEARCH_VERTICAL`;
-    await page.goto(searchUrl, { timeout: 60000 });
-    await page.waitForTimeout(3000);
-
-    // 🔄 Scroll pour charger les posts
-    for (let i = 0; i < 2; i++) {
-      await page.mouse.wheel(0, 1000);
-      await delay(1500);
+    // Vérifie si la session est encore active
+    if (await page.$('input[name="session_key"]')) {
+      throw new Error("Non connecté à LinkedIn. Lance 'login.js' en local.");
     }
 
-    // 🧠 Extraire les données
-    const posts = await page.$$eval('div.update-components-text', (nodes) =>
-      nodes.map((el) => ({
+    // Recherche
+    const searchUrl = `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(keyword)}&origin=GLOBAL_SEARCH_HEADER`;
+    await page.goto(searchUrl, { waitUntil: 'domcontentloaded' });
+
+    await page.waitForTimeout(3000); // ⏳ Laisse les résultats se charger
+
+    const posts = await page.$$eval('.update-components-text', nodes =>
+      nodes.map(el => ({
         title: el.innerText.trim(),
       }))
     );
 
-    if (!posts.length) {
-      console.log(`⚠️ Aucun post récupéré pour le mot-clé : ${keyword}`);
-      return [{ message: 'Aucun résultat trouvé.' }];
-    }
-
     console.log(`✅ ${posts.length} posts récupérés pour le mot-clé : ${keyword}`);
     return posts;
-  } catch (error) {
-    console.error('❌ Erreur durant le scraping :', error);
-    throw error;
+
+  } catch (err) {
+    console.error('Erreur scraping LinkedIn :', err.message);
+    return [];
   } finally {
     await browser.close();
   }
