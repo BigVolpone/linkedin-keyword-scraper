@@ -32,5 +32,5 @@ Ajoute un fichier `.env` (ou configure tes variables dans Railway) :
 ```env
 LINKEDIN_EMAIL=ton.email@exemple.com
 LINKEDIN_PASSWORD=tonMotDePasseUltraSecret
-LINKEDIN_KEYWORDS=marketing digital, scale up, no code, IA
+LINKEDIN_KEYWORDS=yourkeywords
 HEADLESS=true
