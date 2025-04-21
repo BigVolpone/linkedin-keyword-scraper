@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import scrapeLinkedIn from './linkedin-search.js';
 
 dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -12,9 +11,11 @@ app.get('/', async (req, res) => {
 
   try {
     const results = await scrapeLinkedIn(keyword);
+
     if (!results.length) {
-      return res.status(200).json([{ message: 'Aucun résultat trouvé.' }]);
+      return res.status(200).json({ message: 'Aucun résultat trouvé.' });
     }
+
     res.json(results);
   } catch (error) {
     console.error('❌ Erreur scraping LinkedIn :', error);
@@ -23,5 +24,5 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
+  console.log(`🚀 Serveur en ligne sur http://localhost:${PORT}`);
 });
